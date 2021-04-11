@@ -16,6 +16,8 @@ from kivy.uix.image import Image
 import os
 import ast
 import time
+import theory
+import chains
 
 
 class MenuScreen(Screen):
@@ -41,10 +43,10 @@ class Theory(Screen):
 
         self.layout = GridLayout(cols=1, spacing=10, size_hint_y=None)
         self.layout.bind(minimum_height=self.layout.setter('height'))
-        back_button = Button(text='< Назад в главное меню',
-                             on_press=lambda x: set_screen('menu'),
+        back_button = Button(text='Назад', on_press=lambda x: set_screen('menu'),
                              size_hint_y=None, height=dp(40),
-                             background_normal='img/back.png')
+                             #background_normal='img/back.png'
+                             ) #кнопка возвращения в главное меню
         self.layout.add_widget(back_button)
         self.txt1 = TextInput(text='', multiline=False, height=dp(40),
                               size_hint_y=None, hint_text="Название элемента")
@@ -53,7 +55,9 @@ class Theory(Screen):
                                                       Window.height))
         root.add_widget(self.layout)
         self.add_widget(root)
-        btn1 = Button(text="Поиск", size_hint_y=None, height=dp(40)) #кнопка поиска
+        btn1 = Button(text='Поиск', size_hint_y=None, height=dp(80),
+                      #background_normal='img/browse.png'
+                      ) #кнопка поиска
         btn1.bind(on_press=self.buttonClick)
         self.layout.add_widget(btn1)
 
@@ -68,6 +72,7 @@ class Theory(Screen):
     def buttonClick(self, btn1):
         if not self.txt1.text:
             return
+        result = theory.collect(self.txt1.text)
         self.app = App.get_running_app()
         self.app.user_data = ast.literal_eval(
             self.app.config.get('General', 'user_data'))
@@ -75,6 +80,7 @@ class Theory(Screen):
 
         self.app.config.set('General', 'user_data', self.app.user_data)
         self.app.config.write()
+        self.txt1.text = ''
 
     def on_leave(self):
 

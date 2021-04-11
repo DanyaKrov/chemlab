@@ -6,10 +6,9 @@ def collect(text):
     #text = main_part(text) пока ещё не готово(
     con = sqlite3.connect('databases/theory_db.sqlite')
     cur = con.cursor()
-    result = cur.execute("""SELECT t.descrp FROM Theory AS t
-    WHERE t.title """) #поиск по бд searching data base
-    for elem in result:
-        print(elem[0])
+    result = cur.execute(f"""SELECT descrp FROM Theory AS t
+    WHERE title LIKE '{text}'""") #поиск по бд searching data base
+    return result
     con.close()
 
 

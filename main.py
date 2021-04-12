@@ -61,10 +61,10 @@ class Theory(Screen):
         btn1.bind(on_press=self.buttonClick)
         self.layout.add_widget(btn1)
 
-        dic_foods = ast.literal_eval(
-            App.get_running_app().config.get('General', 'user_data')) #это притча
+        browse = ast.literal_eval(
+            App.get_running_app().config.get('General', 'user_data')) #получение ответа при поиске
 
-        for f, d in sorted(dic_foods.items(), key=lambda x: x[1]):
+        for f, d in sorted(browse.items(), key=lambda x: x[1]):
             fd = f.decode('u8') + ' ' + (datetime.fromtimestamp(d).strftime('%Y-%m-%d'))
             btn = Button(text=fd, size_hint_y=None, height=dp(40))
             self.layout.add_widget(btn)
@@ -76,7 +76,7 @@ class Theory(Screen):
         self.app = App.get_running_app()
         self.app.user_data = ast.literal_eval(
             self.app.config.get('General', 'user_data'))
-        self.app.user_data[self.txt1.text.encode('u8')] = int(time.time())
+        self.app.user_data[self.txt1.text.encode('u8')] = result
 
         self.app.config.set('General', 'user_data', self.app.user_data)
         self.app.config.write()
@@ -84,17 +84,18 @@ class Theory(Screen):
 
     def on_leave(self):
 
-        self.layout.clear_widgets() #отключение виджетов, иногда приходится уходить
+        self.layout.clear_widgets() #отключение виджетов
 
 
 class Chains(Screen):
     def buttonClicked(self, btn1):
         if not self.txt1.text:
             return
+        result = chains.collect(self.txt1.text)
         self.app = App.get_running_app()
         self.app.user_data = ast.literal_eval(
             self.app.config.get('General', 'user_data'))
-        self.app.user_data[self.txt1.text.encode('u8')] = int(time.time())
+        self.app.user_data[self.txt1.text.encode('u8')] = result
 
         self.app.config.set('General', 'user_data', self.app.user_data)
         self.app.config.write()
@@ -142,14 +143,14 @@ class Chemlab(App):
         super(Chemlab, self).__init__(**kvargs)
         self.config = ConfigParser()
 
-    def build_config(self, config):
-        config.adddefaultsection('General')
-        config.setdefault('General', 'user_data', '{}')
-
     def set_value_from_config(self):
         self.config.read(os.path.join(self.directory, '%(appname)s.ini'))
         self.user_data = ast.literal_eval(self.config.get(
             'General', 'user_data'))
+
+    def build_config(self, config):
+        config.adddefaultsection('General')
+        config.setdefault('General', 'user_data', '{}')
 
     def get_application_config(self):
         return super(Chemlab, self).get_application_config(

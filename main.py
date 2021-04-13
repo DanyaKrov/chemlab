@@ -28,8 +28,7 @@ class MenuScreen(Screen):
                               set_screen('theory'),
                               background_normal='img/theory.png',
                               )) #окно с теорией
-        box.add_widget(Button(text='Цепочки',
-                              on_press=lambda x: set_screen('chains'),
+        box.add_widget(Button(on_press=lambda x: set_screen('chains'),
                               background_normal='img/chains.png')) #окно с цепочками
 
         self.add_widget(box)
@@ -45,7 +44,7 @@ class Theory(Screen):
         self.layout.bind(minimum_height=self.layout.setter('height'))
         back_button = Button(text='Назад', on_press=lambda x: set_screen('menu'),
                              size_hint_y=None, height=dp(40),
-                             #background_normal='img/back.png'
+                             background_normal='img/back.png'
                              ) #кнопка возвращения в главное меню
         self.layout.add_widget(back_button)
         self.txt1 = TextInput(text='', multiline=False, height=dp(40),
@@ -66,7 +65,7 @@ class Theory(Screen):
 
         for f, d in sorted(browse.items(), key=lambda x: x[1]):
             fd = f.decode('u8') + ' ' + (datetime.fromtimestamp(d).strftime('%Y-%m-%d'))
-            btn = Button(text=fd, size_hint_y=None, height=dp(40))
+            btn = Button(text=fd, size_hint_y=None, height=dp(40), on_press=lambda x: set_screen('browse'))
             self.layout.add_widget(btn)
 
     def buttonClick(self, btn1):
@@ -136,6 +135,7 @@ sm = ScreenManager()
 sm.add_widget(MenuScreen(name='menu'))
 sm.add_widget(Theory(name='theory'))
 sm.add_widget(Chains(name='chains'))
+sm.add_widget(Browse_information(name='browse'))
 
 
 class Chemlab(App):
@@ -158,6 +158,25 @@ class Chemlab(App):
 
     def build(self):
         return sm
+
+
+class Browse_information(Screen):
+    def __init__(self, **kw):
+        super(Browse_information, self).__init__(**kw)
+
+    def on_enter(self):
+        self.layout = GridLayout(cols=1, spacing=10, size_hint_y=None)
+        self.layout.bind(minimum_height=self.layout.setter('height'))
+        back_button = Button(text='Назад', on_press=lambda x: set_screen('menu'),
+                             size_hint_y=None, height=dp(40),
+                             background_normal='img/back.png'
+                             ) #кнопка возвращения в главное меню
+        self.layout.add_widget(back_button)
+        self.text1 = Label(text='Some information...', on_press=lambda x: set_screen('menu'),
+                             size_hint_y=None, height=dp(40))
+    def on_leave(self):
+
+        self.layout.clear_widgets() #отключение виджетов
 
 
 if __name__ == '__main__':

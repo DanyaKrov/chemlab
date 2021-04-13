@@ -7,7 +7,7 @@ def collect(text):
     con = sqlite3.connect('databases/theory_db.sqlite')
     cur = con.cursor()
     result = cur.execute(f"""SELECT descrp FROM Theory AS t
-    WHERE title LIKE '{text}'""") #поиск по бд searching data base
+    WHERE title1 LIKE '{text1}' AND title2 LIKE '{text2}'""") #поиск по бд searching data base
     return result
     con.close()
 

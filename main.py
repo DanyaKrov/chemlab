@@ -25,11 +25,11 @@ class MenuScreen(Screen):
         super(MenuScreen, self).__init__(**kw)
         box = BoxLayout(orientation='vertical')
         box.add_widget(Button(on_press=lambda x:
-                              set_screen('theory'),
+        set_screen('theory'),
                               background_normal='img/theory.png',
-                              )) #окно с теорией
+                              ))  # окно с теорией
         box.add_widget(Button(on_press=lambda x: set_screen('chains'),
-                              background_normal='img/chains.png')) #окно с цепочками
+                              background_normal='img/chains.png'))  # окно с цепочками
 
         self.add_widget(box)
 
@@ -45,7 +45,7 @@ class Theory(Screen):
         back_button = Button(text='Назад', on_press=lambda x: set_screen('menu'),
                              size_hint_y=None, height=dp(40),
                              background_normal='img/back.png'
-                             ) #кнопка возвращения в главное меню
+                             )  # кнопка возвращения в главное меню
         self.layout.add_widget(back_button)
         self.txt1 = TextInput(text='', multiline=False, height=dp(40),
                               size_hint_y=None, hint_text="Название элемента")
@@ -55,13 +55,13 @@ class Theory(Screen):
         root.add_widget(self.layout)
         self.add_widget(root)
         btn1 = Button(text='Поиск', size_hint_y=None, height=dp(80),
-                      #background_normal='img/browse.png'
-                      ) #кнопка поиска
+                      # background_normal='img/browse.png'
+                      )  # кнопка поиска
         btn1.bind(on_press=self.buttonClick)
         self.layout.add_widget(btn1)
 
         browse = ast.literal_eval(
-            App.get_running_app().config.get('General', 'user_data')) #получение ответа при поиске
+            App.get_running_app().config.get('General', 'user_data'))  # получение ответа при поиске
 
         for f, d in sorted(browse.items(), key=lambda x: x[1]):
             fd = f.decode('u8') + ' ' + (datetime.fromtimestamp(d).strftime('%Y-%m-%d'))
@@ -83,12 +83,12 @@ class Theory(Screen):
 
     def on_leave(self):
 
-        self.layout.clear_widgets() #отключение виджетов
+        self.layout.clear_widgets()  # отключение виджетов
 
 
 class Chains(Screen):
     def buttonClicked(self, btn1):
-        if not self.txt1.text:
+        if not self.txt1.text and not self.txt2.text:
             return
         result = chains.collect(self.txt1.text)
         self.app = App.get_running_app()
@@ -99,7 +99,7 @@ class Chains(Screen):
         self.app.config.set('General', 'user_data', self.app.user_data)
         self.app.config.write()
 
-        text = "Последний добавленный элемент  " + self.txt1.text #последний элемент
+        text = "Последний добавленный элемент  " + self.txt1.text  # последний элемент
         self.result.text = text
         self.txt1.text = ''
 
@@ -107,18 +107,18 @@ class Chains(Screen):
         super(Chains, self).__init__(**kw)
         box = BoxLayout(orientation='vertical')
         back_button = Button(text='< Назад в главное меню', on_press=lambda x:
-                             set_screen('menu'), size_hint_y=None, height=dp(40))
+        set_screen('menu'), size_hint_y=None, height=dp(40))
         box.add_widget(back_button)
         self.txt1 = TextInput(text='', multiline=False, height=dp(40),
-                              size_hint_y=None, hint_text="Название вещества")
+                              size_hint_y=None, hint_text="Название вещества 1")
+        self.txt1 = TextInput(text='', multiline=False, height=dp(40),
+                              size_hint_y=None, hint_text="Название вещества 2")
         box.add_widget(self.txt1)
-        btn1 = Button(text="Добавить вещество", size_hint_y=None, height=dp(40),
+        box.add_widget(self.txt2)
+        btn1 = Button(text="Рассчитать", size_hint_y=None, height=dp(40),
                       )
         btn1.bind(on_press=self.buttonClicked)
-        btn2 = Button(text="Найти", size_hint_y=None, height=dp(40))
-        btn2.bind(on_press=self.result1)
         box.add_widget(btn1)
-        box.add_widget(btn2)
         self.result = Label(text='')
         box.add_widget(self.result)
         self.add_widget(box)
@@ -170,13 +170,13 @@ class Browse_information(Screen):
         back_button = Button(text='Назад', on_press=lambda x: set_screen('menu'),
                              size_hint_y=None, height=dp(40),
                              background_normal='img/back.png'
-                             ) #кнопка возвращения в главное меню
+                             )  # кнопка возвращения в главное меню
         self.layout.add_widget(back_button)
         self.text1 = Label(text='Some information...', on_press=lambda x: set_screen('menu'),
-                             size_hint_y=None, height=dp(40))
-    def on_leave(self):
+                           size_hint_y=None, height=dp(40))
 
-        self.layout.clear_widgets() #отключение виджетов
+    def on_leave(self):
+        self.layout.clear_widgets()  # отключение виджетов
 
 
 if __name__ == '__main__':

@@ -36,6 +36,7 @@ class MenuScreen(Screen):
 
 class Theory(Screen):
     def __init__(self, **kw):
+        self.list = []
         super(Theory, self).__init__(**kw)
 
     def on_enter(self):
@@ -60,10 +61,7 @@ class Theory(Screen):
         btn1.bind(on_press=self.buttonClick)
         self.layout.add_widget(btn1)
 
-        browse = ast.literal_eval(
-            App.get_running_app().config.get('General', 'user_data'))  # получение ответа при поиске
-
-        for f, d in sorted(browse.items(), key=lambda x: x[1]):
+        for f, d in sorted(self.list, key=lambda x: x[1]):
             fd = f.decode('u8') + ' ' + (datetime.fromtimestamp(d).strftime('%Y-%m-%d'))
             btn = Button(text=fd, size_hint_y=None, height=dp(40), on_press=lambda x: set_screen('browse'))
             self.layout.add_widget(btn)
@@ -71,14 +69,10 @@ class Theory(Screen):
     def buttonClick(self, btn1):
         if not self.txt1.text:
             return
+        self.list = []
         result = theory.collect(self.txt1.text)
-        self.app = App.get_running_app()
-        self.app.user_data = ast.literal_eval(
-            self.app.config.get('General', 'user_data'))
-        self.app.user_data[self.txt1.text.encode('u8')] = result
-
-        self.app.config.set('General', 'user_data', self.app.user_data)
-        self.app.config.write()
+        for i in result:
+            self.list.append(i)
         self.txt1.text = ''
 
     def on_leave(self):
@@ -111,7 +105,7 @@ class Chains(Screen):
         box.add_widget(back_button)
         self.txt1 = TextInput(text='', multiline=False, height=dp(40),
                               size_hint_y=None, hint_text="Название вещества 1")
-        self.txt1 = TextInput(text='', multiline=False, height=dp(40),
+        self.txt2 = TextInput(text='', multiline=False, height=dp(40),
                               size_hint_y=None, hint_text="Название вещества 2")
         box.add_widget(self.txt1)
         box.add_widget(self.txt2)
@@ -125,39 +119,6 @@ class Chains(Screen):
 
     def result1(self):
         print(1)
-
-
-def set_screen(name_screen):
-    sm.current = name_screen
-
-
-sm = ScreenManager()
-sm.add_widget(MenuScreen(name='menu'))
-sm.add_widget(Theory(name='theory'))
-sm.add_widget(Chains(name='chains'))
-sm.add_widget(Browse_information(name='browse'))
-
-
-class Chemlab(App):
-    def __init__(self, **kvargs):
-        super(Chemlab, self).__init__(**kvargs)
-        self.config = ConfigParser()
-
-    def set_value_from_config(self):
-        self.config.read(os.path.join(self.directory, '%(appname)s.ini'))
-        self.user_data = ast.literal_eval(self.config.get(
-            'General', 'user_data'))
-
-    def build_config(self, config):
-        config.adddefaultsection('General')
-        config.setdefault('General', 'user_data', '{}')
-
-    def get_application_config(self):
-        return super(Chemlab, self).get_application_config(
-            '{}/%(appname)s.ini'.format(self.directory))
-
-    def build(self):
-        return sm
 
 
 class Browse_information(Screen):
@@ -177,6 +138,29 @@ class Browse_information(Screen):
 
     def on_leave(self):
         self.layout.clear_widgets()  # отключение виджетов
+
+
+def set_screen(name_screen):
+    sm.current = name_screen
+
+
+sm = ScreenManager()
+sm.add_widget(MenuScreen(name='menu'))
+sm.add_widget(Theory(name='theory'))
+sm.add_widget(Chains(name='chains'))
+sm.add_widget(Browse_information(name='browse'))
+
+
+class Chemlab(App):
+    def __init__(self, **kvargs):
+        super(Chemlab, self).__init__(**kvargs)
+
+    def get_application_config(self):
+        return super(Chemlab, self).get_application_config(
+            '{}/%(appname)s.ini'.format(self.directory))
+
+    def build(self):
+        return sm
 
 
 if __name__ == '__main__':

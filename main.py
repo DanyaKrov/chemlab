@@ -72,8 +72,8 @@ class Theory(Screen):
         self.list = []
         result = theory.collect(self.txt1.text)
         for i in result:
-            self.list.append(i)
-        self.txt1.text = ''
+            self.list.append(i) #добавление элементов в список
+        self.txt1.text = '' #теперь в поле ввода ничего нет
 
     def on_leave(self):
 
@@ -84,18 +84,10 @@ class Chains(Screen):
     def buttonClicked(self, btn1):
         if not self.txt1.text and not self.txt2.text:
             return
-        result = chains.collect(self.txt1.text)
-        self.app = App.get_running_app()
-        self.app.user_data = ast.literal_eval(
-            self.app.config.get('General', 'user_data'))
-        self.app.user_data[self.txt1.text.encode('u8')] = result
-
-        self.app.config.set('General', 'user_data', self.app.user_data)
-        self.app.config.write()
-
-        text = "Последний добавленный элемент  " + self.txt1.text  # последний элемент
-        self.result.text = text
+        self.result.text = self.tx1.text + '+' + chains.collect(self.txt1.text)[0] + '=' + self.tx2.text
         self.txt1.text = ''
+        self.txt2.text = '' #очищение полей ввода
+
 
     def __init__(self, **kw):
         super(Chains, self).__init__(**kw)

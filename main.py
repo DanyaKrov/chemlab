@@ -61,10 +61,7 @@ class Theory(Screen):
         btn1.bind(on_press=self.buttonClick)
         self.layout.add_widget(btn1)
 
-        for f, d in sorted(self.list, key=lambda x: x[1]):
-            fd = f.decode('u8') + ' ' + (datetime.fromtimestamp(d).strftime('%Y-%m-%d'))
-            btn = Button(text=fd, size_hint_y=None, height=dp(40), on_press=lambda x: set_screen('browse'))
-            self.layout.add_widget(btn)
+
 
     def buttonClick(self, btn1):
         if not self.txt1.text:
@@ -74,9 +71,11 @@ class Theory(Screen):
         for i in result:
             self.list.append(i) #добавление элементов в список
         self.txt1.text = '' #теперь в поле ввода ничего нет
+        for i in self.list:
+            btn = Button(text=i[0], size_hint_y=None, height=dp(40), on_press=lambda x: set_screen('browse'))
+            self.layout.add_widget(btn)
 
     def on_leave(self):
-
         self.layout.clear_widgets()  # отключение виджетов
 
 

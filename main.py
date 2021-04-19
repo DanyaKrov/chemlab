@@ -60,6 +60,9 @@ class Theory(Screen):
                       )  # кнопка поиска
         btn1.bind(on_press=self.buttonClick)
         self.layout.add_widget(btn1)
+        for i in self.list:
+            btn = Button(text=i[0], size_hint_y=None, height=dp(40), on_press=lambda x: set_screen('browse'))
+            self.layout.add_widget(btn)
 
 
 
@@ -71,9 +74,7 @@ class Theory(Screen):
         for i in result:
             self.list.append(i) #добавление элементов в список
         self.txt1.text = '' #теперь в поле ввода ничего нет
-        for i in self.list:
-            btn = Button(text=i[0], size_hint_y=None, height=dp(40), on_press=lambda x: set_screen('browse'))
-            self.layout.add_widget(btn)
+        self.on_enter()
 
     def on_leave(self):
         self.layout.clear_widgets()  # отключение виджетов
@@ -83,7 +84,7 @@ class Chains(Screen):
     def buttonClicked(self, btn1):
         if not self.txt1.text and not self.txt2.text:
             return
-        self.result.text = self.tx1.text + '+' + chains.collect(self.txt1.text)[0] + '=' + self.tx2.text
+        self.result.text = self.txt1.text + '+' + chains.collect(self.txt1.text)[0] + '=' + self.txt2.text
         self.txt1.text = ''
         self.txt2.text = '' #очищение полей ввода
 

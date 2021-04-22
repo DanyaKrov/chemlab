@@ -19,6 +19,7 @@ import ast
 import time
 import theory
 import chains
+import photo_get_text
 
 
 class MenuScreen(Screen):
@@ -42,7 +43,7 @@ class Theory(Screen):
     def on_enter(self):
         self.layout = GridLayout(cols=1, spacing=10, size_hint_y=None)
         self.layout.bind(minimum_height=self.layout.setter('height'))
-        back_button = Button(text='Назад', on_press=lambda x: set_screen('menu'),
+        back_button = Button(text='< Назад в главное меню', on_press=lambda x: set_screen('menu'),
                              size_hint_y=None, height=dp(40),
                              background_normal='img/back.png'
                              )  # кнопка возвращения в главное меню
@@ -68,6 +69,16 @@ class Theory(Screen):
             self.layout.add_widget(btn)
 
 
+    def click_camera(self, elements):
+        if not elements:
+            return
+        self.list = []
+        result = theory.collect(self.txt1.text)
+        for i in result:
+            self.list.append(i) #добавление элементов в список
+        self.txt1.text = '' #теперь в поле ввода ничего нет
+        self.on_enter()
+
 
     def buttonClick(self, btn1):
         if not self.txt1.text:
@@ -79,6 +90,7 @@ class Theory(Screen):
         self.txt1.text = '' #теперь в поле ввода ничего нет
         self.on_enter()
 
+
     def on_leave(self):
         self.layout.clear_widgets()  # отключение виджетов
 
@@ -89,21 +101,27 @@ class Camera(Screen):
 
     def on_enter(self):
         self.layout = GridLayout(cols=1, spacing=10, size_hint_y=None)
+        back_button = Button(text='< Назад в главное меню', on_press=lambda x: set_screen('menu'),
+                             size_hint_y=None, height=dp(40),
+                             background_normal='img/back.png'
+                             )  # кнопка возвращения в главное меню
+        self.layout.add_widget(back_button)
         camlayout = FloatLayout(size=(600, 600))
-        cam = Camera()  # Get the camera
-        cam.play = True  # Start the camera
+        cam = Camera()  # создание объекта камеры
+        cam.play = True  # старт камеры
         camlayout.add_widget(cam)
 
         button = Button(text='Сделать фото', size_hint=(0.12, 0.12), on_press=self.screengrab)
-        button.bind(on_press=self.screengrab)
+        button.bind(on_press=self.screengrab) #кнопка
         camlayout.add_widget(button)
         self.fileprefix = 'snap'
         self.add_widget(camlayout)
         self.add_widget(self.layout)
 
     def screengrab(self, *largs):
-        outname = self.fileprefix + '_%(counter)04d.png'
+        outname = self.fileprefix + '.png'
         Window.screenshot(name=outname)
+        Theory.click_camera(photo_get_text.collect(outname))
 
     def on_leave(self):
         self.layout.clear_widgets()  # отключение виджетов
@@ -188,4 +206,3 @@ class Chemlab(App):
 
 if __name__ == '__main__':
     Chemlab().run()
-
